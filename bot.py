@@ -13,7 +13,7 @@ import datetime
 from datetime import timedelta
 from collections import OrderedDict, deque, Counter
 
-bot = commands.Bot(command_prefix='?', case_insensitive=True)
+bot = commands.Bot(command_prefix='lv.', case_insensitive=True)
 bot.remove_command('help')
 
 initial_extensions = ['cogs.leveling',
@@ -31,7 +31,7 @@ if __name__ == '__main__':
 async def on_ready():
     print(f'We have logged in as {bot.user}')
     print('Ready!')
-    return await bot.change_presence(activity=discord.Activity(type=3, name='for Levels'))
+    return await bot.change_presence(activity=discord.Activity(type=3, name='Prefix:lv'))
 
 @bot.event
 async def on_guild_join(guild):
