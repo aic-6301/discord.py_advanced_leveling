@@ -25,53 +25,8 @@ class Ranks(commands.Cog, name='Ranks'):
     @commands.group(invoke_without_command=True)
     @checks.is_admin()
     async def ranks(self, ctx):
-        await ctx.send('**Ranks Commands**\n\n> `rank add`\n> `rank remove`\n> `rank list` ')
+        await ctx.send('**Ranks Commands**\n\n> `rank list` ')
     
-    @ranks.command()
-    @checks.is_admin()
-    async def add(self, ctx):
-        await ctx.send('**Please insert the role name.** *(Case Sensitive)*')
-        def check(m):
-            return m.author == ctx.message.author and m.channel == ctx.message.channel
-        rolename = await self.bot.wait_for('message', check=check)
-        await ctx.send('**Please insert the level required to obtain this role.**')
-        level = await self.bot.wait_for('message', check=check)
-        role = discord.utils.get(ctx.guild.roles, name=rolename.content)
-        main = sqlite3.connect('Leveling/main.db')
-        cursor = main.cursor()
-        cursor.execute(f"SELECT role_id, level FROM ranks WHERE guild_id = '{ctx.guild.id}' and role_id = '{role.id}'")
-        result = cursor.fetchone()
-        if result is None:
-            sql = ("INSERT INTO ranks(guild_id, role_id, level) VALUES(?,?,?)")
-            val = (str(ctx.guild.id), str(role.id), level.content)
-            cursor.execute(sql, val)
-            main.commit()
-            await ctx.send('Role added.')
-        else:
-            await ctx.send('That role is already assigned to a level.')
-        cursor.close()
-        main.close()
-    
-    @ranks.command()
-    @checks.is_admin()
-    async def remove(self, ctx):
-        await ctx.send('**Please insert the role name.** *(Case Sensitive)*')
-        def check(m):
-            return m.author == ctx.message.author and m.channel == ctx.message.channel
-        rolename = await self.bot.wait_for('message', check=check)
-        role = discord.utils.get(ctx.guild.roles, name=rolename.content)
-        main = sqlite3.connect('Leveling/main.db')
-        cursor = main.cursor()
-        cursor.execute(f"SELECT role_id, level FROM ranks WHERE guild_id = '{ctx.guild.id}' and role_id = '{role.id}'")
-        result = cursor.fetchone()
-        if result is not None:
-            cursor.execute("DELETE FROM ranks WHERE guild_id = '{}' and role_id = '{}'".format(ctx.guild.id, role.id))
-            main.commit()
-            await ctx.send('Role removed.')
-        else:
-            await ctx.send('That role is not assigned to a level.')
-        cursor.close()
-        main.close()
     
     @ranks.command(name='list')
     @checks.is_admin()
@@ -297,7 +252,7 @@ class TextLeveling(commands.Cog, name='Leveling'):
         desc = ''
         v = 1
         for result in result:
-            if v > 5:
+            if v > 10:
                 break
 
             if result[0] == None:
@@ -309,7 +264,7 @@ class TextLeveling(commands.Cog, name='Leveling'):
             v += 1
             
         embed = discord.Embed(color=0xff003d)
-        embed.add_field(name='**Leaderboard Top 5**', value=desc)
+        embed.add_field(name='**Leaderboard Top 10**', value=desc)
         embed.set_thumbnail(url='https://images-ext-2.discordapp.net/external/gf8sjTwr0DCWMKpYuNd8yXlzvywht43aRWh6QjnMPw0/%3Fsize%3D128/https/cdn.discordapp.com/avatars/648362865048420373/bf8b2c1ed038e8d19f8863db3fba526c.png')
         embed.set_footer(text=f'{ctx.message.guild}')
         embed.timestamp = datetime.datetime.utcnow()
@@ -488,9 +443,9 @@ class VoiceLeveling(commands.Cog):
                     await VoiceLeveling(self).start_time(member, before, after)
                  
 
-def setup(bot):
-    bot.add_cog(TextLeveling(bot))
-    bot.add_cog(VoiceLeveling(bot))
+async def setup(bot):
+    await bot.add_cog(TextLeveling(bot))
+    await bot.add_cog(VoiceLeveling(bot))
     print('Levels is loaded.')
-    bot.add_cog(Ranks(bot))
+    await bot.add_cog(Ranks(bot))
     print('Ranks is Loaded')
