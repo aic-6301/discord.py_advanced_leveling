@@ -11,24 +11,26 @@ import random
 import re
 import datetime
 from datetime import timedelta
+from dotenv import load_dotenv
 from collections import OrderedDict, deque, Counter
 
-bot = commands.Bot(command_prefix='lv.', case_insensitive=True)
+bot = commands.Bot(command_prefix='lv.', case_insensitive=True, intents=discord.Intents.all())
 bot.remove_command('help')
-
+load_dotenv()
+TOKEN = os.getenv('token')
 initial_extensions = ['cogs.leveling',
                       'cogs.public']
 
-if __name__ == '__main__':
-    for extension in initial_extensions:
-        try:
-            bot.load_extension(extension)
-        except Exception as e:
-            print(f'Failed to load extension {extension}', file=sys.stderr)
-            traceback.print_exc()
+
 
 @bot.event
 async def on_ready():
+    for extension in initial_extensions:
+        try:
+            await bot.load_extension(extension)
+        except Exception as e:
+            print(f'Failed to load extension {extension}', file=sys.stderr)
+            traceback.print_exc()
     print(f'We have logged in as {bot.user}')
     print('Ready!')
     return await bot.change_presence(activity=discord.Activity(type=3, name='Prefix:lv'))
@@ -59,9 +61,9 @@ async def reload(ctx, *, msg):
     await ctx.message.delete()
     try:
         if os.path.exists("custom_cogs/{}.py".format(msg)):
-            bot.reload_extension("custom_cogs.{}".format(msg))
+            await bot.reload_extension("custom_cogs.{}".format(msg))
         elif os.path.exists("cogs/{}.py".format(msg)):
-            bot.reload_extension("cogs.{}".format(msg))
+            await bot.reload_extension("cogs.{}".format(msg))
         else:
             raise ImportError("No module named '{}'".format(msg))
     except Exception as e:
@@ -76,9 +78,9 @@ async def unload(ctx, *, msg):
     await ctx.message.delete()
     try:
         if os.path.exists("cogs/{}.py".format(msg)):
-            bot.unload_extension("cogs.{}".format(msg))
+            await bot.unload_extension("cogs.{}".format(msg))
         elif os.path.exists("custom_cogs/{}.py".format(msg)):
-            bot.unload_extension("custom_cogs.{}".format(msg))
+            await bot.unload_extension("custom_cogs.{}".format(msg))
         else:
             raise ImportError("No module named '{}'".format(msg))
     except Exception as e:
@@ -93,9 +95,9 @@ async def load(ctx, *, msg):
     await ctx.message.delete()
     try:
         if os.path.exists("cogs/{}.py".format(msg)):
-            bot.load_extension("cogs.{}".format(msg))
+            await bot.load_extension("cogs.{}".format(msg))
         elif os.path.exists("custom_cogs/{}.py".format(msg)):
-            bot.load_extension("custom_cogs.{}".format(msg))
+            await bot.load_extension("custom_cogs.{}".format(msg))
         else:
             raise ImportError("No module named '{}'".format(msg))
     except Exception as e:
