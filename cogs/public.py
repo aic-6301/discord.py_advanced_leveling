@@ -39,12 +39,6 @@ class Public(commands.Cog, name='Ranks'):
         embed.timestamp = datetime.datetime.utcnow()
         await ctx.send(embed=embed)
     
-    @commands.command()
-    async def invite(self, ctx):
-        embed = discord.Embed(title='Invite the bot!', description='[Click Here!](https://discordapp.com/api/oauth2/authorize?client_id=648362865048420373&permissions=8&scope=bot)', color=0xff003d)
-        embed.set_footer(text='Leveling', icon_url='https://images-ext-2.discordapp.net/external/gf8sjTwr0DCWMKpYuNd8yXlzvywht43aRWh6QjnMPw0/%3Fsize%3D128/https/cdn.discordapp.com/avatars/648362865048420373/bf8b2c1ed038e8d19f8863db3fba526c.png')
-        embed.timestamp = datetime.datetime.utcnow()
-        await ctx.send(embed=embed)
     
     @commands.command(name='help')
     async def _help(self, ctx):
@@ -52,12 +46,12 @@ class Public(commands.Cog, name='Ranks'):
 
         embed.set_footer(text='Leveling', icon_url='https://images-ext-2.discordapp.net/external/gf8sjTwr0DCWMKpYuNd8yXlzvywht43aRWh6QjnMPw0/%3Fsize%3D128/https/cdn.discordapp.com/avatars/648362865048420373/bf8b2c1ed038e8d19f8863db3fba526c.png')
         embed.timestamp = datetime.datetime.utcnow()
-        embed.add_field(name="**Ranks**", value="`?ranks` - Shows info for ranks commands\n`?ranks add` - Adds rank\n`?ranks remove` - Removes rank\n`?ranks list` - Lists all current ranks")
-        embed.add_field(name="**Leveling**", value="`?leveling` - Shows info for leveling commands\n`?leveling enable` - Enables leveling (enabled by default)\n`?leveling disable` - Disables leveling")
-        embed.add_field(name="**General**", value="`?rank <@user>` - Shows rank info for a user\n`?leaderboard` - Shows top 5 leaderboard")
+        embed.add_field(name="**Ranks**", value="`lv.ranks` - Shows info for ranks commands\n lv.ranks list` - Lists all current ranks")
+        embed.add_field(name="**Leveling**", value="`lv.leveling` - Shows info for leveling commands")
+        embed.add_field(name="**General**", value="`lv.rank <@user>` - Shows rank info for a user\n`?leaderboard` - Shows top 5 leaderboard")
 
         await ctx.send(embed=embed)
 
-def setup(bot):
-    bot.add_cog(Public(bot))
+async def setup(bot):
+    await bot.add_cog(Public(bot))
     print('Public is Loaded')
