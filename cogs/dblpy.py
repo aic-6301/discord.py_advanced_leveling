@@ -45,8 +45,8 @@ class BotList(commands.Cog, name='Ranks'):
         logger.info('Received an upvote')
         print(data)
 
-def setup(bot):
+async def setup(bot):
     global logger
     logger = logging.getLogger('bot')
-    bot.add_cog(BotList(bot))
+    await bot.add_cog(BotList(bot))
     print('Bot List is Loaded')
